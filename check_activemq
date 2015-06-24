@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# simple check_MK local plugin to grab performance data from ActiveMQ
+#
+# author: Henrik Pingel <knowhy@gmail.com>
+#
+# this script is a check_mk local check
+#
+
+activemq_admin_bin=/opt/activemq/bin/activemq-admin
+queues=(  )
+
+getData(){   
+ result=$($activemq_admin_bin dstat | tail -1 | awk 'BEGIN{OFS=" ";} {print $1,$2,$3,$4,$5,$6,$7}')
+ queueName=$(echo $result | cut -d " " -f 1)
+ queueSize=$(echo $result | cut -d " " -f 2)
+ queueProducer=$(echo $result | cut -d " " -f 3)
+ queueConsumer=$(echo $result | cut -d " " -f 4)
+ enqueueCount=$(echo $result | cut -d " " -f 5)
+ dequeueCount=$(echo $result | cut -d " " -f 6)
+ queueMemory=$(echo $result | cut -d " " -f 7)
+ difference=`expr $enqueueCount - $dequeueCount`
+
+ # TODO: define status
+ status=0
+
+}
+
+getStats(){
+  result=$($activemq_admin_bin dstat | head -2 | tail -1)
+  heapsize_current=$(echo $result | cut -d " " -f 3)
+  heapsize_free=$(echo $result | cut -d " " -f 4)
+  heapsize_max=$(echo $result | cut -d " " -f 5)
+}
+
+getData
+getStats
+
+echo "$status activemq_$queueName queueSize=$queueSize;;;|queueProducer=$queueProducer;;;|queueConsumer=$queueConsumer;;;|enqueueCount=$enqueueCount;;;|dequeueCount=$dequeueCount;;;|queueMemory=$queueMemory;;;|msg_in_queue=$difference;;;|HeapSize$heapsize_current;;;|HeapSize$heapsize_free;;;|HeapSize$heapsize_max;;; Queue Size: $queueSize Queue Producer: $queueProducer QueueConsumer: $queueConsumer EnqueueCount: $enqueueCount DequeueCount: $dequeueCount QueueMemory: $queueMemory HeapMemory: $heapsize_current $heapsize_free $heapsize_max"

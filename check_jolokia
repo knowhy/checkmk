@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+#
+# author: Henrik Pingel <knowhy@gmail.com>
+# version: 0.1
+#
+# this script is a check_mk local check
+
+from pyjolokia import Jolokia
+from pprint import pprint
+
+# jolokia url
+j4p = Jolokia('http://HOST:PORT/CONTEXT/')
+
+Memory_attributes = [           'NonHeapMemoryUsage',
+                                'HeapMemoryUsage',
+        #                       'ObjectPendingFinalizationCount' ]
+                                ]
+
+MemoryPool_attributes = [       'PeakUsage',
+                #               'UsageThresholdCount',
+                #               'UsageThresholdExceeded',
+                #               'UsageThreshold',
+                #               'UsageThresholdSupported',
+                                'Usage' ]
+
+GarbageCollector_attributes = [ 'CollectionCount',
+                                'CollectionTime' ]
+
+Catalina_attributes = [         #'minTime'
+                                'loadTime',
+                                'processingTime',
+                                'classLoadTime',
+                                'errorCount',
+                                'maxTime',
+                                'requestCount'
+                                ]
+
+http_8081_ThreadPool_attributes = [     'port',
+                                'tcpNoDelay',
+                                'threadPriority',
+                                'soLinger',
+                                'maxThreads',
+                                'running',
+                                'unlockTimeout',
+                                'backlog',
+                                'soTimeout',
+                                'acceptorThreadCount',
+                                'currentThreadsBusy',
+                                'currentThreadCount' ]
+
+http_8442_RequestProcessor_attributes = [
+                                'requestProcessingTime',
+                                'bytesSent',
+                                'processingTime',
+                                'errorCount',
+                                'maxTime',
+                                'requestBytesReceived',
+                                'stage',
+                                'lastRequestProcessingTime',
+                                'globalProcessor',
+                                'serverPort',
+                                'bytesReceived',
+                                'requestCount', ]
+
+
+http_8080_ProtocolHandler_attributes = [
+                                'port',
+                                'maxHttpHeaderSize',
+                                'secure',
+                                'maxThreads',
+                                'processorCache',
+                                'unlockTimeout',
+                                'compressionMinSize',
+                                'maxSavePostSize',
+                                'keepAliveTimeout',
+                                'threadPriority',
+                                'tcpNoDelay',
+                                'maxKeepAliveRequests',
+                                'backlog',
+                                'soTimeout',
+                                'timeout' ]
+
+GlobalRequestProcessor_attributes = [
+                                'bytesSent',
+                                'bytesReceived',
+                                'processingTime',
+                                'maxTime',
+                                'errorCount',
+                                'requestCount',]
+
+# loop over attributes
+
+for attribute in Memory_attributes:
+        memory = j4p.request(type = 'read', mbean='java.lang:type=Memory', attribute=attribute)
+        values = memory["value"]
+        print "0 " + "Jolokia_Memory_attributes_" + attribute + " max=" + str(values["max"]) + "|init=" + str(values["init"]) + "|used=" + str(values["used"]) + "|committed=" + str(values["committed"]) + " -"
+
+for attribute in MemoryPool_attributes:
+        memory_pool = j4p.request(type = 'read', mbean='java.lang:type=MemoryPool,name=Code Cache', attribute=attribute)
+        values = memory_pool["value"]
+        print "0 " + "Jolokia_Memory_Pool_" + attribute + " max=" + str(values["max"]) + "|init=" + str(values["init"]) + "|used=" + str(values["used"]) + "|committed=" + str(values["committed"]) + " -"
+
+for attribute in GlobalRequestProcessor_attributes:
+        GlobalRequestProcessor =  j4p.request(type = 'read', mbean='Catalina:name=http-8442,type=GlobalRequestProcessor', attribute=attribute)
+        mbean = ((GlobalRequestProcessor["request"])["mbean"])
+        value = (GlobalRequestProcessor["value"])
+        print "0 " + "Jolokia_GlobalRequestProcessor_" + attribute + " " + attribute + "=" + str(value) + " " + mbean

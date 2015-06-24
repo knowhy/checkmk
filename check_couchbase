@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+#
+# simple check_MK local plugin to grab performance data from Couchbase server
+#
+# author: Henrik Pingel <knowhy@gmail.com>
+#
+# this check returns always OK
+#
+
+cbstats_bin=/opt/couchbase/bin/cbstats
+host=localhost
+port=11211
+
+#/opt/couchbase/bin/cbstats localhost:11211 all | tr ":" "=" | sed 's/ //g' | tr "\n" "|"
+
+#perf_data=`$cbstats_bin $host:$port all | tr ":" "=" | sed 's/ //g' | tr "\n" "|" | rev | cut -c 2- | rev`
+
+
+#perf_data=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_ep_alog=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "ep_alog" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_ep_db=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "ep_db" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_ep_diskqueue=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "ep_diskqueue" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_ep_io=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "ep_io" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_ep_item=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "ep_item" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_ep_mem=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "ep_mem" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_ep_num=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "ep_num" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+#perf_data_ep=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "ep" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_vb_active=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "vb_active" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_vb_pending=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "vb_pending" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+perf_data_vb_replica=`$cbstats_bin $host:$port all | sed '/ep_dbname/d' | sed '/version/d' | sed '/ep_backend/d' | sed '/ep_bucket_priority/d' | sed '/ep_conflict_resolution_type/d' | sed '/ep_couch_bucket/d' | sed '/ep_flusher_state/d' |sed '/ep_item_eviction_policy/d' | sed '/ep_uuid/d' | sed '/ep_warmup_thread/d' | sed '/ep_workload_pattern/d' | sed '/libevent/d'  | sed '/ep_alog_path/d' | sed '/ep_couch_host/d' | sed '/ep_mem_tracker_enabled/d' | tr ":" "=" | sed 's/ //g' | grep "vb_replica" | tr "\n" "|" | rev | cut -c 2- | rev`
+
+
+status=0
+
+echo $status Couchbase_EP_alog $perf_data_ep_alog Couchbase EP alog Status
+echo $status Couchbase_EP_DB $perf_data_ep_db Couchbase EP DB Status
+echo $status Couchbase_EP_diskqueue $perf_data_ep_diskqueue Couchbase EP Diskqueue Status
+echo $status Couchbase_EP_io $perf_data_ep_io Couchbase EP IO Status
+echo $status Couchbase_EP_item $perf_data_ep_item Couchbase EP item Status
+echo $status Couchbase_EP_mem $perf_data_ep_mem Couchbase EP memory Status
+echo $status Couchbase_EP_num $perf_data_ep_num Couchbase EP num Status
+echo $status Couchebase_vb_active $perf_data_vb_active Couchbase VB active Status
+echo $status Couchebase_vb_pending $perf_data_vb_pending Couchbase VB pending Status
+echo $status Couchebase_vb_replica $perf_data_vb_replica Couchbase VB replica Status
